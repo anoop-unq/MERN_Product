@@ -32,33 +32,39 @@ const Header = () => {
     }
   };
 
+  // Safe user name extraction
+  const getUserFirstName = () => {
+    if (!userdata?.user?.name) return '';
+    return userdata.user.name.split(' ')[0];
+  };
 
   // Dynamic content based on user status
   const getGreeting = () => {
-    if (userdata?.user?.isGuest) return "Welcome, Guest Explorer!";
-    if (isNewUser) return `Great to see you again, ${userdata?.user?.name?.split(' ')[0]}!`;
-    if (isReturningUser) return `Welcome back, ${userdata?.user?.name?.split(' ')[0]}!`;
-    if (userdata) return `Welcome to MarketPlace, ${userdata?.user?.name?.split(' ')[0]}!`;
-    return "Ready to buy & sell?";
+    if (!userdata) return "Ready to buy & sell?";
+    if (userdata.user?.isGuest) return "Welcome, Guest Explorer!";
+    if (isNewUser) return `Great to see you again, ${getUserFirstName()}!`;
+    if (isReturningUser) return `Welcome back, ${getUserFirstName()}!`;
+    return `Welcome to MarketPlace, ${getUserFirstName()}!`;
   };
 
   const getSubheadline = () => {
-    if (userdata?.user?.isGuest) return "Experience our marketplace as a guest. Browse amazing products and see how we connect buyers and sellers.";
+    if (!userdata) return "Join thousands of buyers and sellers in our trusted community marketplace. Safe, secure, and seamless transactions guaranteed.";
+    if (userdata.user?.isGuest) return "Experience our marketplace as a guest. Browse amazing products and see how we connect buyers and sellers.";
     if (isNewUser) return "Your selling journey starts here! List your first product and join our trusted community.";
     if (isReturningUser) return "Continue your marketplace success! Check your sales and discover new products.";
     return "Join thousands of buyers and sellers in our trusted community marketplace. Safe, secure, and seamless transactions guaranteed.";
   };
 
   const getPrimaryButtonText = () => {
-    if (userdata?.user?.isGuest) return "Create Account to Start Selling";
+    if (!userdata) return "Get Started - Free";
+    if (userdata.user?.isGuest) return "Create Account to Start Selling";
     if (isNewUser) return "List Your First Product";
     if (isReturningUser) return "Continue Shopping";
-    if (userdata) return "Explore Marketplace";
-    return "Get Started - Free";
+    return "Explore Marketplace";
   };
 
   const getBenefits = () => {
-    const baseBenefits = userdata?.user?.isGuest 
+    const baseBenefits = !userdata || userdata.user?.isGuest 
       ? [
           "🛍️ Preview amazing products",
           "💰 See selling potential",
@@ -141,9 +147,7 @@ const Header = () => {
                   {getPrimaryButtonText()}
                 </button>
                 
-                {userdata ? (
-                 null
-                ) : (
+                {!userdata && (
                   <button
                     onClick={() => navigate('/login')}
                     className="px-6 md:px-8 py-3 md:py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg font-semibold text-base md:text-lg hover:bg-white/20 transition-all duration-300"
@@ -188,7 +192,7 @@ const Header = () => {
                   {/* Quick Features */}
                   <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
                     {[
-                      userdata?.user?.isGuest ? "✓ Create account for full access" : "✓ Zero commission on first 10 sales",
+                      !userdata || userdata.user?.isGuest ? "✓ Create account for full access" : "✓ Zero commission on first 10 sales",
                       "✓ Seller protection program",
                       "✓ Secure payment processing",
                       "✓ Fast shipping options"
@@ -204,13 +208,13 @@ const Header = () => {
                     onClick={handleExploreClick}
                     className="w-full py-3 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg font-semibold hover:from-green-600 hover:to-blue-600 transition-all duration-300 text-sm md:text-base"
                   >
-                    {userdata?.user?.isGuest ? 'Sign Up Free' :
-                     userdata ? 'Go to Marketplace' : 'Start Selling Today'}
+                    {!userdata ? 'Start Selling Today' :
+                     userdata.user?.isGuest ? 'Sign Up Free' : 'Go to Marketplace'}
                   </button>
                 </div>
 
                 {/* Floating Elements */}
-                {!userdata?.user?.isGuest && (
+                {userdata && !userdata.user?.isGuest && (
                   <>
                     <div className="absolute -top-2 -right-2 md:-top-4 md:-right-4 bg-yellow-400 text-yellow-900 px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold animate-bounce">
                       Popular 🔥
